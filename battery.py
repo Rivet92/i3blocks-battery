@@ -14,10 +14,18 @@ if not status:
     fulltext = "<span color='red'><span font='FontAwesome'>\uf00d \uf240</span></span>"
     percentleft = 100
 else:
-    state = status.split(": ")[1].split(", ")[0]
-    commasplitstatus = status.split(", ")
-    percentleft = int(commasplitstatus[1].rstrip("%\n"))
 
+    percentleft = 0    
+    state = status.split("\n")
+    del state[-1]
+    timeleft = ""
+
+    for i,line in enumerate(state):
+        percentleft += int(float(line.split(", ")[1].rstrip("%")) / (len(state)*100) * 100)
+        state[i] = line.split(": ")[1].split(",")[0]
+        if len(line.split(", ")) > 2:
+            timeleft = line.split(", ")[2].split()[0]
+ 
     # stands for charging
     FA_LIGHTNING = "<span color='yellow'><span font='FontAwesome'>\uf0e7</span></span>"
 
@@ -25,38 +33,42 @@ else:
     FA_PLUG = "<span font='FontAwesome'>\uf1e6</span>"
 
     fulltext = ""
-    timeleft = ""
 
-    if state == "Discharging":
-        time = commasplitstatus[-1].split()[0]
-        time = ":".join(time.split(":")[0:2])
+    if "Discharging" in state or 'Charging' in state:
+        time = ":".join(timeleft.split(":")[0:2])
         timeleft = " ({})".format(time)
-    elif state == "Full":
-        fulltext = FA_PLUG + " "
-    elif state == "Unknown":
+    
+    if "Full" in state:
+        if "Unknown" in state:
+            fulltext = FA_PLUG + " "
+            timeleft = ""
+
+        if "Charging" in state:
+            fulltext = FA_LIGHTNING + FA_PLUG + " "
+    elif "Unknown" in state:
         fulltext = "<span font='FontAwesome'>\uf128</span> "
     else:
-        fulltext = FA_LIGHTNING + " " + FA_PLUG + " "
+        fulltext = FA_LIGHTNING + FA_PLUG + " "
 
     def color(percent):
         if percent < 10:
             # exit code 33 will turn background red
             return "#FFFFFF"
         if percent < 20:
-            return "#FF3300"
+            return "#FF0000"
         if percent < 30:
-            return "#FF6600"
+            return "#FF3300"
         if percent < 40:
-            return "#FF9900"
+            return "#FF6600"
         if percent < 50:
-            return "#FFCC00"
+            return "#FF9900"
         if percent < 60:
-            return "#FFFF00"
+            return "#FFCC00"
         if percent < 70:
-            return "#FFFF33"
+            return "#FFFF00"
         if percent < 80:
-            return "#FFFF66"
-        return "#FFFFFF"
+            return "#CCFF00"
+        return "#00FF00"
 
     form =  '<span color="{}">{}%</span>'
     fulltext += form.format(color(percentleft), percentleft)
