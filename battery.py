@@ -33,18 +33,24 @@ else:
     FA_PLUG = "<span font='FontAwesome'>\uf1e6</span>"
 
     fulltext = ""
-
-    if "Discharging" in state or 'Charging' in state:
-        time = ":".join(timeleft.split(":")[0:2])
-        timeleft = " ({})".format(time)
+    timeleft_symbol = "-"
     
+    if "Discharging" in state or "Charging" in state:
+        if percentleft == 100:
+            timeleft = " (FULL)"
+        else:
+            time = ":".join(timeleft.split(":")[0:2])
+            timeleft = "{}".format(time)
+    
+    # At least one battery is full
     if "Full" in state:
-        if "Unknown" in state:
-            fulltext = FA_PLUG + " "
-            timeleft = ""
 
-        if "Charging" in state:
+        # Full & Charging
+        if "Charging" in state or "Unknown" in state:
             fulltext = FA_LIGHTNING + FA_PLUG + " "
+            timeleft_symbol = "+"
+
+    # Battery missing/acpi error?
     elif "Unknown" in state:
         fulltext = "<span font='FontAwesome'>\uf128</span> "
     else:
@@ -72,7 +78,8 @@ else:
 
     form =  '<span color="{}">{}%</span>'
     fulltext += form.format(color(percentleft), percentleft)
-    fulltext += timeleft
+    if ":" in timeleft:
+        fulltext += " ({}{})".format(timeleft_symbol, timeleft)
 
 print(fulltext)
 print(fulltext)
