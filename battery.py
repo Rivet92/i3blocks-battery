@@ -36,11 +36,8 @@ else:
     timeleft_symbol = "-"
     
     if "Discharging" in state or "Charging" in state:
-        if percentleft == 100:
-            timeleft = " (FULL)"
-        else:
-            time = ":".join(timeleft.split(":")[0:2])
-            timeleft = "{}".format(time)
+        time = ":".join(timeleft.split(":")[0:2])
+        timeleft = "{}".format(time)
     
     # At least one battery is full
     if "Full" in state:
@@ -56,6 +53,11 @@ else:
     else:
         fulltext = FA_LIGHTNING + FA_PLUG + " "
 
+    if percentleft >= 100:
+        timeleft = " (FULL)"
+    elif ":" in timeleft:
+        timeleft = " ({}{})".format(timeleft_symbol, timeleft)
+    
     def color(percent):
         if percent < 10:
             # exit code 33 will turn background red
@@ -78,8 +80,7 @@ else:
 
     form =  '<span color="{}">{}%</span>'
     fulltext += form.format(color(percentleft), percentleft)
-    if ":" in timeleft:
-        fulltext += " ({}{})".format(timeleft_symbol, timeleft)
+    fulltext += timeleft
 
 print(fulltext)
 print(fulltext)
