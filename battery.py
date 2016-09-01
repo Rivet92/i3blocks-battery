@@ -34,19 +34,20 @@ else:
     timeleft_symbol = "-"
     
     # At least one battery is full
-    if "Full" in state:
-        if "Charging" in state:
-            fulltext = FA_PLUG + FA_LIGHTNING
-            timeleft_symbol = "+"
-        elif all(s == "Full" for s in state):
+    if all(s == "Full" for s in state):
             fulltext = FA_PLUG
     
     elif "Charging" in state or "Discharging" in state:
-        time = ":".join(timeleft.split(":")[0:2])
-        timeleft = "{}".format(time)        
+        if "charging" in timeleft:  # catch when no time return is given
+            timeleft = ""
+        else:
+            time = ":".join(timeleft.split(":")[0:2])
+            timeleft = "{}".format(time)
+
         if "Charging" in state:
             fulltext = FA_PLUG + FA_LIGHTNING
             timeleft_symbol = "+"
+
 
     elif all(s=="Unknown" for s in state):
         fulltext = FA_PLUG + FA_QUESTION
