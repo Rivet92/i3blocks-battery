@@ -26,32 +26,35 @@ else:
         if len(line.split(", ")) > 2:
             timeleft = line.split(", ")[2].split()[0]
  
-    # stands for charging
-    FA_LIGHTNING = "<span color='yellow'><span font='FontAwesome'>\uf0e7</span></span>"
-
-    # stands for plugged in
-    FA_PLUG = "<span font='FontAwesome'>\uf1e6</span>"
+    FA_LIGHTNING = "<span color='yellow'><span font='FontAwesome'>\uf0e7</span></span>"     # Charging icon (lightning bolt)
+    FA_PLUG = "<span font='FontAwesome'>\uf1e6</span>"          # Plugged in icon (plug)
+    FA_QUESTION = "<span font='FontAwesome'>\uf128</span>"      # Unknown state (question mark)
 
     fulltext = ""
     timeleft_symbol = "-"
     
-    if "Discharging" in state or "Charging" in state:
-        time = ":".join(timeleft.split(":")[0:2])
-        timeleft = "{}".format(time)
-    
     # At least one battery is full
     if "Full" in state:
-
-        # Full & Charging
-        if "Charging" in state or "Unknown" in state:
-            fulltext = FA_LIGHTNING + FA_PLUG + " "
+        if "Charging" in state:
+            fulltext = FA_PLUG + FA_LIGHTNING
+            timeleft_symbol = "+"
+        elif all(s == "Full" for s in state):
+            fulltext = FA_PLUG
+    
+    elif "Charging" in state or "Discharging" in state:
+        time = ":".join(timeleft.split(":")[0:2])
+        timeleft = "{}".format(time)        
+        if "Charging" in state:
+            fulltext = FA_PLUG + FA_LIGHTNING
             timeleft_symbol = "+"
 
-    # Battery missing/acpi error?
-    elif "Unknown" in state:
-        fulltext = "<span font='FontAwesome'>\uf128</span> "
+    elif all(s=="Unknown" for s in state):
+        fulltext = FA_PLUG + FA_QUESTION
     else:
-        fulltext = FA_LIGHTNING + FA_PLUG + " "
+        fulltext = FA_QUESTION 
+
+    if "Discharging" not in state:
+        fulltext += " "
 
     if percentleft >= 100:
         timeleft = " (FULL)"
