@@ -82,8 +82,19 @@ else:
             return "#CCFF00"
         return "#00FF00"
 
-    form =  '<span color="{}">{}%</span>'
-    fulltext += form.format(color(percentleft), percentleft)
+    def icon(percent):
+        if percent < 20:
+            return "\uf244"
+        if percent < 40:
+            return "\uf243"
+        if percent < 60:
+            return "\uf242"
+        if percent < 80:
+            return "\uf241"
+        return "\uf240"
+    
+    form =  '<span color="{}"><span font="FontAwesome">{}</span> {}%</span>'
+    fulltext += form.format(color(percentleft), icon(percentleft), percentleft)
     fulltext += timeleft
 
 print(fulltext)
