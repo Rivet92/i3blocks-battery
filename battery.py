@@ -27,8 +27,8 @@ else:
             timeleft = line.split(", ")[2].split()[0]
  
     FA_LIGHTNING = "<span color='yellow'><span font='FontAwesome'>\uf0e7</span></span>"     # Charging icon (lightning bolt)
-    FA_PLUG = "<span font='FontAwesome'>\uf1e6</span> "          # Plugged in icon (plug)
-    FA_QUESTION = "<span font='FontAwesome'>\uf128</span> "      # Unknown state (question mark)
+    FA_PLUG = "<span font='FontAwesome'>\uf1e6</span>"          # Plugged in icon (plug)
+    FA_QUESTION = "<span font='FontAwesome'>\uf128</span>"      # Unknown state (question mark)
 
     fulltext = ""
     timeleft_symbol = "-"
@@ -97,7 +97,6 @@ else:
     fulltext += form.format(color(percentleft), icon(percentleft), percentleft)
     fulltext += timeleft
 
-print(fulltext)
 print(fulltext)
 if percentleft < 10:
     exit(33)
